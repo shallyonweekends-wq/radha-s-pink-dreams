@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Heart, Laugh, Users, Flower, Camera } from "lucide-react";
 import CameraCapture from "./CameraCapture";
@@ -17,6 +17,16 @@ const importImages = (folder: string) => {
 
 const Gallery = () => {
   const [activeTab, setActiveTab] = useState("funny");
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Audio files for each tab
+  const tabMusic = {
+    funny: "/music/funny.mp3",
+    together: "/music/together.mp3",
+    lovely: "/music/lovely.mp3",
+    flower: "/music/flower.mp3",
+    "peak-beauty": "/music/peak-beauty.mp3",
+  };
 
   const galleries = {
     funny: importImages("funny"),
@@ -24,6 +34,27 @@ const Gallery = () => {
     lovely: importImages("lovely"),
     flower: importImages("flower"),
   };
+
+  // Play music when tab changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+
+    const musicSrc = tabMusic[activeTab as keyof typeof tabMusic];
+    if (musicSrc) {
+      audioRef.current = new Audio(musicSrc);
+      audioRef.current.loop = true;
+      audioRef.current.play().catch(err => console.log("Audio playback failed:", err));
+    }
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
+  }, [activeTab]);
 
   const GalleryGrid = ({ images, category }: { images: string[]; category: string }) => {
     if (images.length === 0) {
