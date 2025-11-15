@@ -6,11 +6,12 @@ import CameraCapture from "./CameraCapture";
 // Import images from organized folders
 const importImages = (folder: string) => {
   try {
-    const images = import.meta.glob('/src/assets/gallery/**/*.{jpg,jpeg,png,gif,webp}', { eager: true });
+    const images = import.meta.glob('@/assets/gallery/**/*.{jpg,jpeg,png,gif,webp,JPG,JPEG,PNG,GIF,WEBP}', { eager: true });
     return Object.entries(images)
-      .filter(([path]) => path.includes(`/${folder}/`))
+      .filter(([path]) => path.includes(`/gallery/${folder}/`))
       .map(([path, module]) => (module as { default: string }).default);
-  } catch {
+  } catch (error) {
+    console.error('Error loading images:', error);
     return [];
   }
 };

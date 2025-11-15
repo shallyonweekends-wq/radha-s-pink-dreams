@@ -1,6 +1,7 @@
 import { useState } from "react";
 import SplashScreen from "@/components/SplashScreen";
 import VideoSection from "@/components/VideoSection";
+import BirthdayWheel from "@/components/BirthdayWheel";
 import Gallery from "@/components/Gallery";
 
 const Index = () => {
@@ -13,6 +14,7 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <VideoSection />
+      <BirthdayWheel />
       <Gallery />
     </div>
   );
