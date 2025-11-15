@@ -57,6 +57,9 @@ const CameraCapture = () => {
   };
 
   useEffect(() => {
+    // Auto-start camera when component mounts
+    startCamera();
+    
     return () => {
       stopCamera();
     };
@@ -77,14 +80,7 @@ const CameraCapture = () => {
         {!isActive && !capturedImage && (
           <div className="text-center py-20">
             <Camera className="w-24 h-24 mx-auto mb-6 text-primary animate-float" />
-            <Button
-              onClick={startCamera}
-              size="lg"
-              className="bg-gradient-romantic text-white font-bold text-xl px-8 py-6 rounded-full shadow-glow hover:scale-110 transition-transform"
-            >
-              <Sparkles className="w-6 h-6 mr-2" />
-              Start Camera
-            </Button>
+            <p className="text-muted-foreground">Starting camera...</p>
           </div>
         )}
 
