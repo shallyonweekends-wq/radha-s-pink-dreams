@@ -1,48 +1,53 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
+import { Wheel } from "react-custom-roulette";
 
 const wheelOptions = [
   { 
     id: 1, 
-    text: "let's go for death ride",
+    option: "let's go for death ride",
     message: "Hold tight baby! Time for an adrenaline rush! 🎢💨",
-    imagePlaceholder: "/images/death-ride.jpg"
+    imagePlaceholder: "/images/death-ride.jpg",
+    style: { backgroundColor: '#3b82f6', textColor: 'white' }
   },
   { 
     id: 2, 
-    text: "secret behind....",
+    option: "secret behind....",
     message: "Shhhh... I've been hiding something special for you! 🤫✨",
-    imagePlaceholder: "/images/secret.jpg"
+    imagePlaceholder: "/images/secret.jpg",
+    style: { backgroundColor: '#ef4444', textColor: 'white' }
   },
   { 
     id: 3, 
-    text: "something cringe but lovely",
+    option: "something cringe but lovely",
     message: "Warning: Maximum cringe levels incoming! But you'll love it 😘💖",
-    imagePlaceholder: "/images/cringe-lovely.jpg"
+    imagePlaceholder: "/images/cringe-lovely.jpg",
+    style: { backgroundColor: '#f59e0b', textColor: 'white' }
   },
   { 
     id: 4, 
-    text: "catwalk",
+    option: "catwalk",
     message: "Time to show off those moves, gorgeous! Work it! 💃✨",
-    imagePlaceholder: "/images/catwalk.jpg"
+    imagePlaceholder: "/images/catwalk.jpg",
+    style: { backgroundColor: '#10b981', textColor: 'white' }
   },
   { 
     id: 5, 
-    text: "let's live",
+    option: "let's live",
     message: "Life is short, let's make every moment count together! 🌟💕",
-    imagePlaceholder: "/images/lets-live.jpg"
+    imagePlaceholder: "/images/lets-live.jpg",
+    style: { backgroundColor: '#ec4899', textColor: 'white' }
   }
 ];
 
 const BirthdayWheel = () => {
-  const [showCelebration, setShowCelebration] = useState(true);
   const [showButton, setShowButton] = useState(false);
-  const [spinning, setSpinning] = useState(false);
+  const [mustSpin, setMustSpin] = useState(false);
+  const [prizeNumber, setPrizeNumber] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Keep celebration visible, just show button after 3 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowButton(true);
@@ -52,100 +57,80 @@ const BirthdayWheel = () => {
   }, []);
 
   const spinWheel = () => {
-    if (spinning || currentIndex >= wheelOptions.length) return;
+    if (mustSpin || currentIndex >= wheelOptions.length) return;
     
-    setSpinning(true);
+    setPrizeNumber(currentIndex);
+    setMustSpin(true);
     setSelectedOption(null);
-    
-    // Spin animation for 3 seconds
-    setTimeout(() => {
-      setSelectedOption(currentIndex);
-      setSpinning(false);
-      setCurrentIndex(prev => prev + 1);
-    }, 3000);
   };
 
-  if (!showButton && selectedOption === null) {
-    return (
-      <section className="min-h-screen flex items-center justify-center bg-gradient-soft p-6">
-        <div className="text-center animate-scale-in">
-          <div className="mb-8 animate-heart-beat">
-            <h1 className="text-6xl md:text-8xl font-bold text-primary mb-4">
-              🎉 Happy Birthday Tony! 🎂
-            </h1>
-            <p className="text-3xl md:text-4xl text-primary-foreground animate-pulse">
-              Time to celebrate YOU! ✨
-            </p>
-          </div>
-          <div className="flex gap-4 justify-center text-6xl animate-float">
-            🎈 🎁 🎊 🎉 🎂
-          </div>
-        </div>
-      </section>
-    );
-  }
+  const handleSpinComplete = () => {
+    setMustSpin(false);
+    setSelectedOption(currentIndex);
+    setCurrentIndex(prev => prev + 1);
+  };
 
-  if (showButton && selectedOption === null) {
+  if (selectedOption === null) {
     return (
       <section className="min-h-screen flex items-center justify-center bg-gradient-soft p-6">
-        <div className="text-center animate-fade-in">
-          <h2 className="text-4xl md:text-6xl font-bold text-primary mb-8 animate-heart-beat">
-            Let's do something fun! 🎯
-          </h2>
-          <Button
-            onClick={spinWheel}
-            disabled={spinning || currentIndex >= wheelOptions.length}
-            size="lg"
-            className="bg-gradient-romantic text-white font-bold text-2xl px-12 py-8 rounded-full shadow-glow hover:scale-110 transition-transform"
-          >
-            <Sparkles className="w-8 h-8 mr-3" />
-            {currentIndex >= wheelOptions.length ? "All Done! 🎉" : spinning ? "Spinning..." : "Spin the Wheel!"}
-          </Button>
-        </div>
-      </section>
-    );
-  }
-
-  if (spinning) {
-    return (
-      <section className="min-h-screen flex items-center justify-center bg-gradient-soft p-6">
-        <div className="text-center">
-          <div className="relative w-96 h-96 mx-auto mb-8">
-            {/* Spinning wheel with segments */}
-            <div className="absolute inset-0 animate-spin" style={{ animationDuration: '0.5s' }}>
-              <svg viewBox="0 0 200 200" className="w-full h-full">
-                {wheelOptions.map((option, index) => {
-                  const angle = (360 / wheelOptions.length) * index;
-                  const nextAngle = (360 / wheelOptions.length) * (index + 1);
-                  const colors = ['#ff69b4', '#ff1493', '#ff85c0', '#ff3399', '#ff6bb3'];
-                  
-                  return (
-                    <g key={option.id}>
-                      <path
-                        d={`M 100 100 L ${100 + 90 * Math.cos((angle - 90) * Math.PI / 180)} ${100 + 90 * Math.sin((angle - 90) * Math.PI / 180)} A 90 90 0 0 1 ${100 + 90 * Math.cos((nextAngle - 90) * Math.PI / 180)} ${100 + 90 * Math.sin((nextAngle - 90) * Math.PI / 180)} Z`}
-                        fill={colors[index]}
-                        stroke="white"
-                        strokeWidth="2"
-                      />
-                    </g>
-                  );
-                })}
-              </svg>
+        <div className="text-center space-y-12">
+          {/* Birthday Message - Always visible */}
+          <div className="animate-scale-in">
+            <div className="mb-8 animate-heart-beat">
+              <h1 className="text-6xl md:text-8xl font-bold text-primary mb-4">
+                🎉 Happy Birthday Tony! 🎂
+              </h1>
+              <p className="text-3xl md:text-4xl text-secondary-foreground animate-pulse">
+                Time to celebrate YOU! ✨
+              </p>
             </div>
-            {/* Center circle */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-3xl shadow-glow">
-                🎰
+            <div className="flex gap-4 justify-center text-6xl animate-float">
+              🎈 🎁 🎊 🎉 🎂
+            </div>
+          </div>
+
+          {/* Spinning Wheel and Button */}
+          {showButton && (
+            <div className="animate-fade-in space-y-8">
+              {!mustSpin && (
+                <h2 className="text-4xl md:text-6xl font-bold text-primary animate-heart-beat">
+                  Let's do something fun! 🎯
+                </h2>
+              )}
+              
+              <div className="flex flex-col items-center gap-8">
+                <div className="relative">
+                  <Wheel
+                    mustStartSpinning={mustSpin}
+                    prizeNumber={prizeNumber}
+                    data={wheelOptions}
+                    onStopSpinning={handleSpinComplete}
+                    outerBorderColor="#ff1493"
+                    outerBorderWidth={8}
+                    innerBorderColor="#ffffff"
+                    innerBorderWidth={4}
+                    radiusLineColor="#ffffff"
+                    radiusLineWidth={2}
+                    fontSize={18}
+                    textDistance={70}
+                    spinDuration={0.5}
+                  />
+                </div>
+                
+                {!mustSpin && (
+                  <Button
+                    onClick={spinWheel}
+                    disabled={currentIndex >= wheelOptions.length}
+                    size="lg"
+                    className="bg-gradient-romantic text-white font-bold text-2xl px-12 py-8 rounded-full shadow-glow hover:scale-110 transition-transform"
+                  >
+                    <Sparkles className="w-8 h-8 mr-3" />
+                    {currentIndex >= wheelOptions.length ? "All Done! 🎉" : "Spin the Wheel!"}
+                  </Button>
+                )}
               </div>
             </div>
-            {/* Pointer */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2">
-              <div className="w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[30px] border-t-primary" />
-            </div>
-          </div>
-          <p className="text-2xl font-bold text-primary animate-pulse">
-            Spinning the wheel of fun...
-          </p>
+          )}
         </div>
       </section>
     );
@@ -159,7 +144,7 @@ const BirthdayWheel = () => {
         <div className="max-w-4xl mx-auto text-center animate-scale-in">
           <div className="bg-soft-pink rounded-3xl shadow-romantic p-8 mb-8">
             <h3 className="text-3xl md:text-5xl font-bold text-primary mb-6 animate-heart-beat">
-              🎉 {option.text} 🎉
+              🎉 {option.option} 🎉
             </h3>
             <p className="text-xl md:text-2xl text-primary-foreground mb-8">
               {option.message}
@@ -167,7 +152,7 @@ const BirthdayWheel = () => {
             <div className="relative aspect-video rounded-2xl overflow-hidden shadow-glow bg-muted">
               <img
                 src={option.imagePlaceholder}
-                alt={option.text}
+                alt={option.option}
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
