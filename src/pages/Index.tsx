@@ -3,6 +3,7 @@ import SplashScreen from "@/components/SplashScreen";
 import VideoSection from "@/components/VideoSection";
 import BirthdayWheel from "@/components/BirthdayWheel";
 import Gallery from "@/components/Gallery";
+import FeedbackForm from "@/components/FeedbackForm";
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -16,6 +17,7 @@ const Index = () => {
       <VideoSection />
       <BirthdayWheel />
       <Gallery />
+      <FeedbackForm />
     </div>
   );
 };

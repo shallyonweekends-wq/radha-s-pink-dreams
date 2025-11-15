@@ -42,11 +42,11 @@ const BirthdayWheel = () => {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Keep celebration visible, just show button after 3 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
-      setShowCelebration(false);
       setShowButton(true);
-    }, 5000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -65,7 +65,7 @@ const BirthdayWheel = () => {
     }, 3000);
   };
 
-  if (showCelebration) {
+  if (!showButton && selectedOption === null) {
     return (
       <section className="min-h-screen flex items-center justify-center bg-gradient-soft p-6">
         <div className="text-center animate-scale-in">
@@ -110,14 +110,37 @@ const BirthdayWheel = () => {
     return (
       <section className="min-h-screen flex items-center justify-center bg-gradient-soft p-6">
         <div className="text-center">
-          <div className="relative w-80 h-80 mx-auto mb-8">
-            <div className="absolute inset-0 flex items-center justify-center animate-spin">
-              <div className="w-full h-full rounded-full border-8 border-primary border-t-transparent" />
+          <div className="relative w-96 h-96 mx-auto mb-8">
+            {/* Spinning wheel with segments */}
+            <div className="absolute inset-0 animate-spin" style={{ animationDuration: '0.5s' }}>
+              <svg viewBox="0 0 200 200" className="w-full h-full">
+                {wheelOptions.map((option, index) => {
+                  const angle = (360 / wheelOptions.length) * index;
+                  const nextAngle = (360 / wheelOptions.length) * (index + 1);
+                  const colors = ['#ff69b4', '#ff1493', '#ff85c0', '#ff3399', '#ff6bb3'];
+                  
+                  return (
+                    <g key={option.id}>
+                      <path
+                        d={`M 100 100 L ${100 + 90 * Math.cos((angle - 90) * Math.PI / 180)} ${100 + 90 * Math.sin((angle - 90) * Math.PI / 180)} A 90 90 0 0 1 ${100 + 90 * Math.cos((nextAngle - 90) * Math.PI / 180)} ${100 + 90 * Math.sin((nextAngle - 90) * Math.PI / 180)} Z`}
+                        fill={colors[index]}
+                        stroke="white"
+                        strokeWidth="2"
+                      />
+                    </g>
+                  );
+                })}
+              </svg>
             </div>
+            {/* Center circle */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-4xl font-bold text-primary animate-pulse">
+              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-3xl shadow-glow">
                 🎰
               </div>
+            </div>
+            {/* Pointer */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2">
+              <div className="w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[30px] border-t-primary" />
             </div>
           </div>
           <p className="text-2xl font-bold text-primary animate-pulse">
