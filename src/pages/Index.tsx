@@ -1,22 +1,32 @@
 import { useState } from "react";
+import IntroSplash from "@/components/IntroSplash";
 import SplashScreen from "@/components/SplashScreen";
-import VideoSection from "@/components/VideoSection";
+import BirthdayMessage from "@/components/BirthdayMessage";
 import BirthdayWheel from "@/components/BirthdayWheel";
-import Gallery from "@/components/Gallery";
+import TextPage from "@/components/TextPage";
+import VideoPage from "@/components/VideoPage";
+import CameraSection from "@/components/CameraSection";
 import FeedbackForm from "@/components/FeedbackForm";
 
 const Index = () => {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showIntro, setShowIntro] = useState(true);
 
-  if (showSplash) {
-    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  if (showIntro) {
+    return <IntroSplash onComplete={() => setShowIntro(false)} />;
   }
 
   return (
-    <div className="min-h-screen">
-      <VideoSection />
+    <div className="h-dvh overflow-y-scroll snap-y snap-mandatory scroll-smooth">
+      <SplashScreen />
+      <BirthdayMessage />
       <BirthdayWheel />
-      <Gallery />
+      <TextPage text="Thodi cheeesy majak mastiiii" emoji="🎭" />
+      <VideoPage videoSrc="/media/dok.mp4" />
+      <TextPage text="Is why only Grandhi bapu said,
+
+what did he say????" emoji="🤔" />
+      <VideoPage videoSrc="/media/gandhi.mp4" />
+      <CameraSection />
       <FeedbackForm />
     </div>
   );

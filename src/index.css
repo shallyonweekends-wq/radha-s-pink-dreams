@@ -44,7 +44,7 @@ All colors MUST be HSL.
     --rose: 340 75% 65%;
     --lavender: 280 60% 75%;
     --light-pink: 330 100% 95%;
-    
+
     /* Gradients */
     --gradient-romantic: linear-gradient(135deg, hsl(330 85% 55%), hsl(280 60% 75%));
     --gradient-soft: linear-gradient(180deg, hsl(330 100% 98%), hsl(330 60% 95%));
@@ -58,6 +58,12 @@ All colors MUST be HSL.
     /* Animations */
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* iOS safe area insets */
+    --safe-area-inset-top: env(safe-area-inset-top);
+    --safe-area-inset-right: env(safe-area-inset-right);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom);
+    --safe-area-inset-left: env(safe-area-inset-left);
   }
 }
 
@@ -129,6 +135,36 @@ All colors MUST be HSL.
 
   .animate-sparkle {
     animation: sparkle 1.5s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float 3s ease-in-out infinite;
+    animation-delay: 1s;
+  }
+}
+
+@layer utilities {
+  /* Touch target minimum for mobile accessibility */
+  .touch-target {
+    @apply min-w-[44px] min-h-[44px];
+  }
+
+  /* Viewport height fallback for older browsers */
+  .h-dvh {
+    height: 100vh; /* Fallback */
+    height: 100dvh; /* Dynamic viewport height */
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-pulse-glow,
+  .animate-heart-beat,
+  .animate-sparkle,
+  .animate-fade-in,
+  .animate-scale-in {
+    animation: none !important;
   }
 }
 

@@ -14,9 +14,9 @@ const FeedbackForm = () => {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-soft p-6">
-      <div className="max-w-2xl w-full mx-auto text-center animate-fade-in">
-        <h2 className="text-4xl md:text-6xl font-bold text-primary mb-8 animate-heart-beat">
+    <section className="h-dvh w-screen snap-start snap-always flex items-center justify-center bg-gradient-soft overflow-hidden">
+      <div className="max-w-2xl w-full mx-auto text-center animate-fade-in px-4 md:px-6">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-8 animate-heart-beat">
           Did you like it????? 💕
         </h2>
         

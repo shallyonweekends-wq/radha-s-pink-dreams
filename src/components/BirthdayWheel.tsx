@@ -1,238 +1,251 @@
 import { useState, useEffect } from "react";
+import { Wheel } from 'react-custom-roulette';
+import confetti from 'canvas-confetti';
 import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Sparkles, X } from "lucide-react";
 
 const wheelOptions = [
-  { 
-    id: 1, 
+  {
     option: "let's go for death ride",
     message: "Hold tight baby! Time for an adrenaline rush! 🎢💨",
-    imagePlaceholder: "/images/death-ride.jpg",
+    imagePlaceholder: "/media/deathride.mp4",
     style: { backgroundColor: '#3b82f6', textColor: 'white' }
   },
-  { 
-    id: 2, 
-    option: "secret behind....",
-    message: "Shhhh... I've been hiding something special for you! 🤫✨",
-    imagePlaceholder: "/images/secret.jpg",
+  {
+    option: "Secret behind.... ",
+    message: "Secret behind height is this...🤫✨",
+    imagePlaceholder: "/media/secret.jpg",
     style: { backgroundColor: '#ef4444', textColor: 'white' }
   },
-  { 
-    id: 3, 
+  {
     option: "something cringe but lovely",
-    message: "Warning: Maximum cringe levels incoming! But you'll love it 😘💖",
-    imagePlaceholder: "/images/cringe-lovely.jpg",
+    message: "Warning: Maximum cringe levels incoming!",
+    imagePlaceholder: "/media/cringe.mp4",
     style: { backgroundColor: '#f59e0b', textColor: 'white' }
   },
-  { 
-    id: 4, 
+  {
     option: "catwalk",
     message: "Time to show off those moves, gorgeous! Work it! 💃✨",
-    imagePlaceholder: "/images/catwalk.jpg",
+    imagePlaceholder: "/media/catwalk.mp4",
     style: { backgroundColor: '#10b981', textColor: 'white' }
   },
-  { 
-    id: 5, 
+  {
     option: "let's live",
-    message: "Life is short, let's make every moment count together! 🌟💕",
-    imagePlaceholder: "/images/lets-live.jpg",
+    message: "HERE WE GOOOOO!!!! (sorry for being romantic here, can't stop myself)",
+    imagePlaceholder: "/media/lived.MOV",
     style: { backgroundColor: '#ec4899', textColor: 'white' }
   }
 ];
 
 const BirthdayWheel = () => {
   const [showButton, setShowButton] = useState(false);
-  const [isSpinning, setIsSpinning] = useState(false);
-  const [rotation, setRotation] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [mustSpin, setMustSpin] = useState(false);
+  const [prizeNumber, setPrizeNumber] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showResult, setShowResult] = useState(false);
+  const [isMediaExpanded, setIsMediaExpanded] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowButton(true);
     }, 3000);
-
     return () => clearTimeout(timer);
   }, []);
 
   const spinWheel = () => {
-    if (isSpinning || currentIndex >= wheelOptions.length) return;
-    
-    setIsSpinning(true);
-    setSelectedOption(null);
-    
-    // Calculate spins: 5 full rotations + landing position
-    const segmentAngle = 360 / wheelOptions.length;
-    const targetRotation = rotation + 1800 + (segmentAngle * currentIndex);
-    
-    setRotation(targetRotation);
-    
-    // Stop spinning after 3 seconds
-    setTimeout(() => {
-      setIsSpinning(false);
-      setSelectedOption(currentIndex);
-      setCurrentIndex(prev => prev + 1);
-    }, 3000);
+    if (mustSpin || currentIndex >= wheelOptions.length) return;
+
+    setShowResult(false);
+    setPrizeNumber(currentIndex);
+    setMustSpin(true);
   };
 
-  if (selectedOption === null) {
-    return (
-      <section className="min-h-screen flex items-center justify-center bg-gradient-soft p-6">
-        <div className="text-center space-y-12">
-          {/* Birthday Message - Always visible */}
-          <div className="animate-scale-in">
-            <div className="mb-8 animate-heart-beat">
-              <h1 className="text-6xl md:text-8xl font-bold text-primary mb-4">
-                🎉 Happy Birthday Tony! 🎂
-              </h1>
-              <p className="text-3xl md:text-4xl text-secondary-foreground animate-pulse">
-                Time to celebrate YOU! ✨
-              </p>
-            </div>
-            <div className="flex gap-4 justify-center text-6xl animate-float">
-              🎈 🎁 🎊 🎉 🎂
+  const handleStopSpinning = () => {
+    setMustSpin(false);
+    setShowResult(true);
+    setIsMediaExpanded(true); // Auto-open fullscreen
+    setCurrentIndex(prev => prev + 1);
+
+    // Confetti celebration with pink theme
+    confetti({
+      particleCount: 200,
+      spread: 100,
+      origin: { y: 0.6 },
+      colors: ['#ff1493', '#ff69b4', '#ffc0cb', '#3b82f6', '#ef4444', '#f59e0b', '#10b981', '#ec4899']
+    });
+  };
+
+  return (
+    <section className="h-dvh w-screen snap-start snap-always flex items-center justify-center bg-gradient-soft overflow-y-auto relative">
+      <div className="text-center w-full max-h-full py-4 sm:py-6 md:py-8 px-4 sm:px-6">
+        {/* Wheel Section */}
+        {showButton && (
+          <div className={`animate-fade-in space-y-4 sm:space-y-6 transition-opacity duration-300 ${showResult ? 'opacity-0 pointer-events-none absolute' : 'opacity-100'}`}>
+            {!mustSpin && (
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-primary animate-heart-beat">
+                Let's do something fun! 🎯
+              </h2>
+            )}
+
+            <div className="flex flex-col items-center gap-6 md:gap-8">
+              <div className="w-[75vw] sm:w-[85vw] max-w-[400px] md:max-w-[500px] h-[75vw] sm:h-[85vw] max-h-[400px] md:max-h-[500px]">
+                <Wheel
+                  mustStartSpinning={mustSpin}
+                  prizeNumber={prizeNumber}
+                  data={wheelOptions}
+                  onStopSpinning={handleStopSpinning}
+                  backgroundColors={wheelOptions.map(o => o.style.backgroundColor)}
+                  textColors={wheelOptions.map(o => o.style.textColor)}
+                  fontSize={16}
+                  outerBorderColor="#ffffff"
+                  outerBorderWidth={5}
+                  innerBorderColor="#ffffff"
+                  innerBorderWidth={3}
+                  radiusLineColor="#ffffff"
+                  radiusLineWidth={2}
+                  spinDuration={0.5}
+                />
+              </div>
+
+              {!mustSpin && (
+                <Button
+                  onClick={spinWheel}
+                  disabled={currentIndex >= wheelOptions.length}
+                  size="lg"
+                  className="bg-gradient-romantic text-white font-bold text-lg sm:text-xl md:text-2xl px-8 md:px-12 py-6 md:py-8 rounded-full shadow-glow hover:scale-110 transition-transform"
+                >
+                  <Sparkles className="w-6 h-6 md:w-8 md:h-8 mr-2 md:mr-3" />
+                  {currentIndex >= wheelOptions.length ? "All Done! 🎉" : "Spin the Wheel!"}
+                </Button>
+              )}
             </div>
           </div>
+        )}
 
-          {/* Spinning Wheel and Button */}
-          {showButton && (
-            <div className="animate-fade-in space-y-8">
-              {!isSpinning && (
-                <h2 className="text-4xl md:text-6xl font-bold text-primary animate-heart-beat">
-                  Let's do something fun! 🎯
-                </h2>
-              )}
-              
-              <div className="flex flex-col items-center gap-8">
-                <div className="relative w-[400px] h-[400px]">
-                  {/* Pointer at top */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2 z-20">
-                    <div className="w-0 h-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-t-[40px] border-t-primary drop-shadow-lg" />
-                  </div>
-                  
-                  {/* Spinning wheel */}
-                  <div 
-                    className="absolute inset-0 transition-transform duration-[3000ms] ease-out"
-                    style={{ transform: `rotate(${rotation}deg)` }}
-                  >
-                    <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-2xl">
-                      {wheelOptions.map((option, index) => {
-                        const angle = (360 / wheelOptions.length) * index - 90;
-                        const nextAngle = (360 / wheelOptions.length) * (index + 1) - 90;
-                        const midAngle = (angle + nextAngle) / 2;
-                        const textRadius = 65;
-                        
-                        // Calculate path for the segment
-                        const startX = 100 + 90 * Math.cos((angle * Math.PI) / 180);
-                        const startY = 100 + 90 * Math.sin((angle * Math.PI) / 180);
-                        const endX = 100 + 90 * Math.cos((nextAngle * Math.PI) / 180);
-                        const endY = 100 + 90 * Math.sin((nextAngle * Math.PI) / 180);
-                        
-                        return (
-                          <g key={option.id}>
-                            <path
-                              d={`M 100 100 L ${startX} ${startY} A 90 90 0 0 1 ${endX} ${endY} Z`}
-                              fill={option.style.backgroundColor}
-                              stroke="white"
-                              strokeWidth="3"
-                            />
-                            <text
-                              x={100 + textRadius * Math.cos((midAngle * Math.PI) / 180)}
-                              y={100 + textRadius * Math.sin((midAngle * Math.PI) / 180)}
-                              fill={option.style.textColor}
-                              fontSize="11"
-                              fontWeight="bold"
-                              textAnchor="middle"
-                              dominantBaseline="middle"
-                              transform={`rotate(${midAngle + 90}, ${100 + textRadius * Math.cos((midAngle * Math.PI) / 180)}, ${100 + textRadius * Math.sin((midAngle * Math.PI) / 180)})`}
-                            >
-                              {option.option.split(' ').map((word, i) => (
-                                <tspan key={i} x={100 + textRadius * Math.cos((midAngle * Math.PI) / 180)} dy={i === 0 ? 0 : 12}>
-                                  {word}
-                                </tspan>
-                              ))}
-                            </text>
-                          </g>
-                        );
-                      })}
-                      {/* Center circle */}
-                      <circle cx="100" cy="100" r="20" fill="#ff1493" stroke="white" strokeWidth="3" />
-                      <text x="100" y="100" textAnchor="middle" dominantBaseline="middle" fontSize="24">
-                        🎰
-                      </text>
-                    </svg>
+        {/* Result Overlay */}
+        {showResult && (
+          <div className="max-w-4xl mx-auto text-center animate-scale-in px-4 sm:px-6">
+            <div className="bg-soft-pink rounded-2xl md:rounded-3xl shadow-romantic p-6 md:p-8 mb-6 md:mb-8">
+              <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-4 md:mb-6 animate-heart-beat">
+                🎉 {wheelOptions[prizeNumber].option} 🎉
+              </h3>
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-primary-foreground mb-6 md:mb-8">
+                {wheelOptions[prizeNumber].message}
+              </p>
+              <div className="relative aspect-video rounded-2xl overflow-hidden shadow-glow bg-muted">
+                {wheelOptions[prizeNumber].imagePlaceholder.match(/\.(mp4|mov|webm|avi)$/i) ? (
+                  <video
+                    src={wheelOptions[prizeNumber].imagePlaceholder}
+                    className="w-full h-full object-contain"
+                    controls
+                    autoPlay
+                    loop
+                    // muted
+                    playsInline
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                    }}
+                  />
+                ) : (
+                  <img
+                    src={wheelOptions[prizeNumber].imagePlaceholder}
+                    alt={wheelOptions[prizeNumber].option}
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                    }}
+                  />
+                )}
+                <div className="hidden absolute inset-0 flex items-center justify-center text-muted-foreground">
+                  <div className="text-center">
+                    <p className="text-lg">Add media here:</p>
+                    <code className="text-sm bg-background px-3 py-1 rounded">
+                      public{wheelOptions[prizeNumber].imagePlaceholder}
+                    </code>
                   </div>
                 </div>
-                
-                {!isSpinning && (
-                  <Button
-                    onClick={spinWheel}
-                    disabled={currentIndex >= wheelOptions.length}
-                    size="lg"
-                    className="bg-gradient-romantic text-white font-bold text-2xl px-12 py-8 rounded-full shadow-glow hover:scale-110 transition-transform"
-                  >
-                    <Sparkles className="w-8 h-8 mr-3" />
-                    {currentIndex >= wheelOptions.length ? "All Done! 🎉" : isSpinning ? "Spinning..." : "Spin the Wheel!"}
-                  </Button>
+              </div>
+            </div>
+
+            {currentIndex < wheelOptions.length && (
+              <Button
+                onClick={spinWheel}
+                size="lg"
+                className="bg-gradient-romantic text-white font-bold text-xl px-10 py-6 rounded-full shadow-glow hover:scale-110 transition-transform"
+              >
+                <Sparkles className="w-6 h-6 mr-2" />
+                Spin Again!
+              </Button>
+            )}
+          </div>
+        )}
+
+        {/* Fullscreen Media Dialog */}
+        <Dialog open={isMediaExpanded} onOpenChange={setIsMediaExpanded}>
+          <DialogContent className="max-w-[100vw] w-full h-[100vh] p-0 bg-black/98 border-none">
+            {/* Close Button */}
+            <button
+              onClick={() => setIsMediaExpanded(false)}
+              className="absolute top-4 right-4 z-50 bg-primary/90 hover:bg-primary text-white rounded-full p-3 shadow-lg transition-all hover:scale-110"
+              aria-label="Close"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <div className="w-full h-full flex flex-col items-center justify-center gap-4 p-4">
+              {/* Title and Message */}
+              <div className="text-center space-y-2 px-4">
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white animate-heart-beat">
+                  🎉 {wheelOptions[prizeNumber]?.option} 🎉
+                </h3>
+                <p className="text-base sm:text-lg md:text-xl text-pink-200">
+                  {wheelOptions[prizeNumber]?.message}
+                </p>
+              </div>
+
+              {/* Media */}
+              <div className="flex-1 w-full flex items-center justify-center max-h-[70vh]">
+                {wheelOptions[prizeNumber]?.imagePlaceholder.match(/\.(mp4|mov|webm|avi)$/i) ? (
+                  <video
+                    src={wheelOptions[prizeNumber].imagePlaceholder}
+                    className="max-w-full max-h-full object-contain rounded-lg"
+                    controls
+                    autoPlay
+                    loop
+                    playsInline
+                  />
+                ) : (
+                  <img
+                    src={wheelOptions[prizeNumber]?.imagePlaceholder}
+                    alt={wheelOptions[prizeNumber]?.option}
+                    className="max-w-full max-h-full object-contain rounded-lg"
+                  />
                 )}
               </div>
-            </div>
-          )}
-        </div>
-      </section>
-    );
-  }
 
-  if (selectedOption !== null) {
-    const option = wheelOptions[selectedOption];
-    
-    return (
-      <section className="min-h-screen flex items-center justify-center bg-gradient-soft p-6">
-        <div className="max-w-4xl mx-auto text-center animate-scale-in">
-          <div className="bg-soft-pink rounded-3xl shadow-romantic p-8 mb-8">
-            <h3 className="text-3xl md:text-5xl font-bold text-primary mb-6 animate-heart-beat">
-              🎉 {option.option} 🎉
-            </h3>
-            <p className="text-xl md:text-2xl text-primary-foreground mb-8">
-              {option.message}
-            </p>
-            <div className="relative aspect-video rounded-2xl overflow-hidden shadow-glow bg-muted">
-              <img
-                src={option.imagePlaceholder}
-                alt={option.option}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                }}
-              />
-              <div className="hidden absolute inset-0 flex items-center justify-center text-muted-foreground">
-                <div className="text-center">
-                  <p className="text-lg">Add image here:</p>
-                  <code className="text-sm bg-background px-3 py-1 rounded">
-                    public{option.imagePlaceholder}
-                  </code>
-                </div>
-              </div>
+              {/* Spin Again Button */}
+              {currentIndex < wheelOptions.length && (
+                <Button
+                  onClick={() => {
+                    setIsMediaExpanded(false);
+                    setTimeout(() => spinWheel(), 300);
+                  }}
+                  size="lg"
+                  className="bg-gradient-romantic text-white font-bold text-lg sm:text-xl px-8 py-4 sm:px-10 sm:py-6 rounded-full shadow-glow hover:scale-110 transition-transform mb-4"
+                >
+                  <Sparkles className="w-6 h-6 mr-2" />
+                  Spin Again!
+                </Button>
+              )}
             </div>
-          </div>
-          
-          {currentIndex < wheelOptions.length && (
-            <Button
-              onClick={spinWheel}
-              size="lg"
-              className="bg-gradient-romantic text-white font-bold text-xl px-10 py-6 rounded-full shadow-glow hover:scale-110 transition-transform"
-            >
-              <Sparkles className="w-6 h-6 mr-2" />
-              Spin Again!
-            </Button>
-          )}
-        </div>
-      </section>
-    );
-  }
-
-  return null;
+          </DialogContent>
+        </Dialog>
+      </div>
+    </section>
+  );
 };
 
 export default BirthdayWheel;

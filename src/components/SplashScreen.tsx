@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
 
-interface SplashScreenProps {
-  onComplete: () => void;
-}
-
-const SplashScreen = ({ onComplete }: SplashScreenProps) => {
-  const [hearts, setHearts] = useState<{ id: number; left: number; delay: number }[]>([]);
+const SplashScreen = () => {
+  const [hearts, setHearts] = useState<
+    { id: number; left: number; delay: number }[]
+  >([]);
 
   useEffect(() => {
     // Generate floating hearts
@@ -17,16 +15,10 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
       delay: Math.random() * 2,
     }));
     setHearts(newHearts);
-
-    const timer = setTimeout(() => {
-      onComplete();
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, [onComplete]);
+  }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-romantic overflow-hidden">
+    <section className="h-dvh w-screen snap-start snap-always flex items-center justify-center bg-gradient-romantic overflow-hidden relative">
       {/* Floating hearts */}
       {hearts.map((heart) => (
         <Heart
@@ -43,12 +35,12 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
       ))}
 
       {/* Main text */}
-      <div className="relative z-10 text-center px-6">
+      <div className="relative z-10 text-center px-2">
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white animate-heart-beat mb-4">
           Oy meri radhaaa
         </h1>
         <p className="text-3xl md:text-5xl lg:text-6xl font-semibold text-white/90 animate-pulse">
-          sun zara ✨
+          this one's for you 💕
         </p>
       </div>
 
@@ -66,7 +58,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           />
         ))}
       </div>
-    </div>
+    </section>
   );
 };
 
